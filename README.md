@@ -1,1 +1,579 @@
-# Payyoff-Planner
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Payoff Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f7f7f5;
+  --white: #ffffff;
+  --border: #e8e8e4;
+  --text: #111110;
+  --sub: #888884;
+  --accent: #1a1a1a;
+  --red: #e5484d;
+  --green: #30a46c;
+  --purple: #6e56cf;
+  --radius: 20px;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 3rem 1.25rem 5rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+.header { text-align: center; margin-bottom: 3rem; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sub);
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  margin-bottom: 1.2rem;
+}
+
+h1 {
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+h1 .red { color: var(--red); }
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--sub);
+  margin-top: 0.75rem;
+  font-weight: 400;
+}
+
+/* Layout */
+.layout {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+}
+
+.inputs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 560px) { .inputs-row { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.field-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--sub);
+}
+
+/* Balance input */
+.balance-input-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  border-bottom: 2px solid var(--text);
+  padding-bottom: 0.4rem;
+}
+.balance-prefix {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--sub);
+  line-height: 1;
+}
+#balance {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text);
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  letter-spacing: -0.03em;
+}
+
+/* Slider field */
+.slider-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1;
+}
+.slider-value small {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--sub);
+  margin-left: 0.2rem;
+  letter-spacing: 0;
+}
+
+input[type=range] {
+  width: 100%;
+  appearance: none;
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+input[type=range]::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 1.5px var(--text);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:active { transform: scale(1.15); }
+
+/* Date selects */
+.date-row { display: flex; gap: 0.6rem; }
+select {
+  flex: 1;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888884' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.2rem;
+  transition: border-color 0.15s;
+}
+select:focus { border-color: var(--text); }
+
+.months-away {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--green);
+  margin-top: 0.4rem;
+}
+
+/* Warning */
+.warning {
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  color: var(--red);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.8rem 1.1rem;
+  border-radius: 12px;
+  display: none;
+}
+
+/* Stats */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 480px) { .stats-row { grid-template-columns: 1fr; gap: 0.75rem; } }
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.stat-card.featured {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+.stat-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sub);
+  margin-bottom: 0.6rem;
+}
+.stat-card.featured .stat-label { color: rgba(255,255,255,0.5); }
+
+.stat-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1;
+}
+.stat-card.featured .stat-value { color: #fff; font-size: 2rem; }
+.stat-value.red { color: var(--red); }
+
+.stat-sub {
+  font-size: 0.7rem;
+  color: var(--sub);
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+.stat-card.featured .stat-sub { color: rgba(255,255,255,0.4); }
+
+/* Chart */
+.chart-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chart-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--sub);
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; gap: 0.35rem; }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+.legend-label { font-size: 0.7rem; font-weight: 500; color: var(--sub); }
+
+.chart-wrap { height: 160px; }
+svg.chart { width: 100%; height: 100%; overflow: visible; }
+.chart-lbl { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; fill: var(--sub); font-weight: 500; }
+
+/* Table */
+.table-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.table-header {
+  padding: 1.25rem 1.5rem 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--sub);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.timeline { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.timeline th {
+  text-align: left;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sub);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.timeline td {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  color: #555552;
+  font-weight: 500;
+}
+.timeline tr:last-child td { border-bottom: none; }
+.timeline tr:hover td { background: var(--bg); }
+.timeline td.money { font-weight: 700; color: var(--text); }
+.timeline td.red { color: var(--red); font-weight: 600; }
+.timeline td.grn { color: var(--green); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="pill">💳 Payoff Planner</div>
+  <h1>Pay off your<br><span class="red">credit card.</span></h1>
+  <p class="subtitle">Set a deadline and see exactly what to pay each month.</p>
+</div>
+
+<div class="layout">
+
+  <!-- Inputs -->
+  <div class="card">
+    <div class="inputs-row">
+
+      <div class="field" style="grid-column: 1 / -1;">
+        <div class="field-label">Current Balance</div>
+        <div class="balance-input-wrap">
+          <span class="balance-prefix">$</span>
+          <input type="text" id="balance" value="2,000" inputmode="decimal" placeholder="0.00" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Payoff Deadline</div>
+        <div class="date-row">
+          <select id="target-month"></select>
+          <select id="target-year"></select>
+        </div>
+        <div class="months-away" id="months-away"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Annual APR</div>
+        <div class="slider-value" id="d-apr">27.49 <small>%</small></div>
+        <input type="range" id="apr" min="1" max="36" step="0.01" value="27.49">
+      </div>
+
+      <div class="field">
+        <div class="field-label">One-time Lump Sum</div>
+        <div class="slider-value" id="d-extra">$0 <small>optional</small></div>
+        <input type="range" id="extra" min="0" max="5000" step="50" value="0">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Warning -->
+  <div class="warning" id="warning"></div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card featured">
+      <div class="stat-label">Monthly Payment</div>
+      <div class="stat-value" id="r-payment">—</div>
+      <div class="stat-sub" id="r-months">needed each month</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Interest</div>
+      <div class="stat-value red" id="r-interest">—</div>
+      <div class="stat-sub" id="r-interest-pct">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total You'll Pay</div>
+      <div class="stat-value" id="r-total">—</div>
+      <div class="stat-sub">principal + interest</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="chart-title">Balance Over Time</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#e8e8e4;"></div><span class="legend-label">Balance</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e5484d;"></div><span class="legend-label">Interest</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#30a46c;"></div><span class="legend-label">Principal</span></div>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <svg class="chart" id="chart" viewBox="0 0 800 148" preserveAspectRatio="none"></svg>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-header">Monthly Breakdown</div>
+    <table class="timeline">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Payment</th>
+          <th>Principal</th>
+          <th>Interest</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody id="timeline-body"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const fmt = n => '$' + Math.abs(Math.round(n)).toLocaleString();
+const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now = new Date();
+
+const mSel = document.getElementById('target-month');
+const ySel = document.getElementById('target-year');
+MO.forEach((m, i) => { const o = document.createElement('option'); o.value = i; o.textContent = m; mSel.appendChild(o); });
+mSel.value = 11;
+for (let y = now.getFullYear(); y <= now.getFullYear() + 10; y++) { const o = document.createElement('option'); o.value = y; o.textContent = y; ySel.appendChild(o); }
+ySel.value = now.getFullYear();
+
+function drawChart(sched) {
+  const svg = document.getElementById('chart');
+  const W = 800, H = 132, BOT = 18;
+  const n = sched.length;
+  if (!n) { svg.innerHTML = ''; return; }
+  const max = sched[0].balanceBefore;
+  const bw = Math.max(1, W / n - 1);
+  let html = '';
+  sched.forEach((d, i) => {
+    const x = i * (W / n);
+    const bH = (d.balanceAfter / max) * (H - BOT);
+    const iH = (d.interest / max) * (H - BOT);
+    const pH = (d.principal / max) * (H - BOT);
+    html += `<rect fill="#f0f0ee" rx="1" x="${x}" y="${H - bH - BOT}" width="${bw}" height="${bH}"/>`;
+    html += `<rect fill="#e5484d" opacity="0.8" rx="1" x="${x}" y="${H - iH - pH - BOT}" width="${bw}" height="${iH}"/>`;
+    html += `<rect fill="#30a46c" opacity="0.8" rx="1" x="${x}" y="${H - pH - BOT}" width="${bw}" height="${pH}"/>`;
+    if (i === 0 || (n <= 24 && i % 3 === 0) || (n > 24 && i % 6 === 0) || i === n - 1)
+      html += `<text class="chart-lbl" x="${x + bw/2}" y="${H}" text-anchor="middle">${d.month}</text>`;
+  });
+  svg.innerHTML = html;
+}
+
+document.getElementById('balance').addEventListener('input', function() {
+  const val = this.value;
+  if (val.endsWith('.') || /\.\d?$/.test(val)) { update(); return; }
+  const raw = val.replace(/[^0-9.]/g, '');
+  const parts = raw.split('.');
+  const intPart = parts[0] ? Number(parts[0]).toLocaleString() : '';
+  const decPart = parts.length > 1 ? '.' + parts[1].slice(0, 2) : '';
+  this.value = intPart + decPart;
+  update();
+});
+
+function update() {
+  const balance = parseFloat(document.getElementById('balance').value.replace(/[^0-9.]/g, '')) || 0;
+  const apr = +document.getElementById('apr').value;
+  const extra = +document.getElementById('extra').value;
+  const tMonth = +document.getElementById('target-month').value;
+  const tYear = +document.getElementById('target-year').value;
+
+  document.getElementById('d-apr').innerHTML = `${apr.toFixed(2)} <small>%</small>`;
+  document.getElementById('d-extra').innerHTML = extra > 0 ? `$${extra.toLocaleString()} <small>lump sum</small>` : `$0 <small>optional</small>`;
+
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  const targetDate = new Date(tYear, tMonth, 1);
+  const numMonths = Math.round((targetDate - nowDate) / (1000 * 60 * 60 * 24 * 30.44));
+  const warn = document.getElementById('warning');
+
+  document.getElementById('months-away').textContent =
+    numMonths > 0 ? `${numMonths} month${numMonths !== 1 ? 's' : ''} from now` : 'Choose a future date';
+
+  if (numMonths <= 0) { warn.style.display = 'block'; warn.textContent = '⚠ Please select a future date.'; return; }
+  warn.style.display = 'none';
+
+  const dailyRate = apr / 100 / 365;
+  const daysIn = d => new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  const avgRate = dailyRate * 30.44;
+  const startBal = balance - extra;
+
+  if (startBal <= 0) {
+    document.getElementById('r-payment').textContent = '$0';
+    document.getElementById('r-months').textContent = 'Lump sum covers it!';
+    document.getElementById('r-interest').textContent = '$0';
+    document.getElementById('r-interest-pct').textContent = '';
+    document.getElementById('r-total').textContent = fmt(balance);
+    return;
+  }
+
+  const payment = avgRate === 0 ? startBal / numMonths :
+    startBal * avgRate / (1 - Math.pow(1 + avgRate, -numMonths));
+
+  if (payment <= startBal * avgRate || payment > startBal * 2) {
+    warn.style.display = 'block';
+    warn.textContent = '⚠ Target date is too soon — push the deadline further out.';
+    document.getElementById('r-payment').textContent = '—';
+    return;
+  }
+
+  let bal = startBal, totalInt = 0;
+  const sched = [];
+  const ld = new Date(nowDate);
+
+  for (let i = 0; i < numMonths; i++) {
+    const rate = dailyRate * daysIn(ld);
+    const interest = bal * rate;
+    const prin = Math.min(payment - interest, bal);
+    const before = bal;
+    bal = Math.max(0, bal - prin);
+    totalInt += interest;
+    sched.push({
+      month: MO[ld.getMonth()] + " '" + String(ld.getFullYear()).slice(2),
+      payment: i === numMonths - 1 ? prin + interest : payment,
+      principal: prin, interest, balanceBefore: before, balanceAfter: bal
+    });
+    ld.setMonth(ld.getMonth() + 1);
+  }
+
+  const totalPaid = payment * (numMonths - 1) + sched[sched.length - 1].payment + extra;
+
+  document.getElementById('r-payment').textContent = fmt(payment);
+  document.getElementById('r-months').textContent = `for ${numMonths} months`;
+  document.getElementById('r-interest').textContent = fmt(totalInt);
+  document.getElementById('r-interest-pct').textContent = `${((totalInt / balance) * 100).toFixed(1)}% of your balance`;
+  document.getElementById('r-total').textContent = fmt(totalPaid);
+
+  drawChart(sched);
+
+  const rows = sched.filter((_, i) => i < 12 || i % 3 === 0 || i === sched.length - 1);
+  document.getElementById('timeline-body').innerHTML = rows.map(d => `
+    <tr>
+      <td>${d.month}</td>
+      <td class="money">${fmt(d.payment)}</td>
+      <td class="grn">${fmt(d.principal)}</td>
+      <td class="red">${fmt(d.interest)}</td>
+      <td class="money">${d.balanceAfter < 1 ? '<span style="color:#30a46c">✓ Done</span>' : fmt(d.balanceAfter)}</td>
+    </tr>`).join('');
+}
+
+['apr','extra','target-month','target-year'].forEach(id => {
+  document.getElementById(id).addEventListener('input', update);
+  document.getElementById(id).addEventListener('change', update);
+});
+
+update();
+</script>
+</body>
+</html>
