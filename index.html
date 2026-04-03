@@ -190,7 +190,29 @@ select {
 }
 select:focus { border-color: var(--text); }
 
-.months-away {
+.toggle-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+.toggle-btn {
+  flex: 1;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--sub);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.toggle-btn.active {
+  background: var(--text);
+  color: white;
+  border-color: var(--text);
+}
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--green);
@@ -367,11 +389,24 @@ svg.chart { width: 100%; height: 100%; overflow: visible; }
       </div>
 
       <div class="field">
-        <div class="field-label">Payoff Deadline</div>
-        <div class="date-row">
-          <select id="target-month"></select>
-          <select id="target-year"></select>
+        <div class="field-label">Payoff Target</div>
+        <div class="toggle-row">
+          <button class="toggle-btn active" id="btn-date" onclick="switchMode('date')">By Date</button>
+          <button class="toggle-btn" id="btn-months" onclick="switchMode('months')">By Months</button>
         </div>
+
+        <div id="mode-date">
+          <div class="date-row" style="margin-top:0.6rem;">
+            <select id="target-month"></select>
+            <select id="target-year"></select>
+          </div>
+        </div>
+
+        <div id="mode-months" style="display:none; margin-top:0.6rem;">
+          <div class="slider-value" id="d-nummonths">12 <small>months</small></div>
+          <input type="range" id="num-months" min="1" max="120" step="1" value="12">
+        </div>
+
         <div class="months-away" id="months-away"></div>
       </div>
 
@@ -452,13 +487,30 @@ svg.chart { width: 100%; height: 100%; overflow: visible; }
 const fmt = n => '$' + Math.abs(Math.round(n)).toLocaleString();
 const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const now = new Date();
+let currentMode = 'date';
 
+// Populate dropdowns
 const mSel = document.getElementById('target-month');
 const ySel = document.getElementById('target-year');
 MO.forEach((m, i) => { const o = document.createElement('option'); o.value = i; o.textContent = m; mSel.appendChild(o); });
 mSel.value = 11;
 for (let y = now.getFullYear(); y <= now.getFullYear() + 10; y++) { const o = document.createElement('option'); o.value = y; o.textContent = y; ySel.appendChild(o); }
 ySel.value = now.getFullYear();
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-date').style.display = mode === 'date' ? 'block' : 'none';
+  document.getElementById('mode-months').style.display = mode === 'months' ? 'block' : 'none';
+  document.getElementById('btn-date').classList.toggle('active', mode === 'date');
+  document.getElementById('btn-months').classList.toggle('active', mode === 'months');
+  update();
+}
+
+document.getElementById('num-months').addEventListener('input', function() {
+  const val = +this.value;
+  document.getElementById('d-nummonths').innerHTML = `${val} <small>month${val !== 1 ? 's' : ''}</small>`;
+  update();
+});
 
 function drawChart(sched) {
   const svg = document.getElementById('chart');
@@ -483,7 +535,6 @@ function drawChart(sched) {
 }
 
 document.getElementById('apr').addEventListener('input', update);
-
 document.getElementById('balance').addEventListener('input', function() {
   const val = this.value;
   if (val.endsWith('.') || /\.\d?$/.test(val)) { update(); return; }
@@ -506,7 +557,9 @@ function update() {
 
   const nowDate = new Date(now.getFullYear(), now.getMonth(), 1);
   const targetDate = new Date(tYear, tMonth, 1);
-  const numMonths = Math.round((targetDate - nowDate) / (1000 * 60 * 60 * 24 * 30.44));
+  const numMonths = currentMode === 'date'
+    ? Math.round((targetDate - nowDate) / (1000 * 60 * 60 * 24 * 30.44))
+    : +document.getElementById('num-months').value;
   const warn = document.getElementById('warning');
 
   document.getElementById('months-away').textContent =
