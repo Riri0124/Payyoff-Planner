@@ -497,6 +497,30 @@ mSel.value = 11;
 for (let y = now.getFullYear(); y <= now.getFullYear() + 10; y++) { const o = document.createElement('option'); o.value = y; o.textContent = y; ySel.appendChild(o); }
 ySel.value = now.getFullYear();
 
+// Load saved values AFTER dropdowns are ready
+function loadData() {
+  const b = localStorage.getItem('pp_balance');
+  const a = localStorage.getItem('pp_apr');
+  const e = localStorage.getItem('pp_extra');
+  const m = localStorage.getItem('pp_month');
+  const y = localStorage.getItem('pp_year');
+  const mode = localStorage.getItem('pp_mode');
+  const nm = localStorage.getItem('pp_nummonths');
+
+  if (b) document.getElementById('balance').value = b;
+  if (a) document.getElementById('apr').value = a;
+  if (e) document.getElementById('extra').value = e;
+  if (m) document.getElementById('target-month').value = m;
+  if (y) document.getElementById('target-year').value = y;
+  if (nm) {
+    document.getElementById('num-months').value = nm;
+    document.getElementById('d-nummonths').innerHTML = `${nm} <small>month${nm != 1 ? 's' : ''}</small>`;
+  }
+  if (mode) switchMode(mode);
+}
+
+loadData();
+
 function switchMode(mode) {
   currentMode = mode;
   document.getElementById('mode-date').style.display = mode === 'date' ? 'block' : 'none';
@@ -635,6 +659,23 @@ function update() {
 ['extra','target-month','target-year'].forEach(id => {
   document.getElementById(id).addEventListener('input', update);
   document.getElementById(id).addEventListener('change', update);
+});
+
+// Save inputs to localStorage
+function saveData() {
+  localStorage.setItem('pp_balance', document.getElementById('balance').value);
+  localStorage.setItem('pp_apr', document.getElementById('apr').value);
+  localStorage.setItem('pp_extra', document.getElementById('extra').value);
+  localStorage.setItem('pp_month', document.getElementById('target-month').value);
+  localStorage.setItem('pp_year', document.getElementById('target-year').value);
+  localStorage.setItem('pp_mode', currentMode);
+  localStorage.setItem('pp_nummonths', document.getElementById('num-months').value);
+}
+
+// Save on every change
+['balance','apr','extra','target-month','target-year','num-months'].forEach(id => {
+  document.getElementById(id).addEventListener('input', saveData);
+  document.getElementById(id).addEventListener('change', saveData);
 });
 
 update();
